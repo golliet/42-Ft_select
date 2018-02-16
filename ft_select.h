@@ -6,13 +6,18 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 11:17:44 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/15 16:15:15 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/16 13:13:35 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_SELECT
 # define FT_SELECT
 
+# include <stdlib.h>
+# include <termios.h>
+# include <curses.h>
+# include <sys/ioctl.h>
+# include <term.h>
 # include <stdlib.h>
 
 typedef struct s_list
