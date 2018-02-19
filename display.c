@@ -6,7 +6,7 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 14:59:25 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/16 09:39:55 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/19 13:38:23 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	ft_display(t_list *list)
 	while (++i < list->lenmax)
 		ft_putchar_fd(' ', 0); // plus tard avec term multiple strjoin
 	write(0, STOP, 4);
-	ft_putstr_fd("  ", 0);
+	ft_putstr_fd(" ", 0);
 }
 
 /*

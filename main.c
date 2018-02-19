@@ -6,7 +6,7 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 11:07:47 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/16 15:37:57 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/19 13:59:51 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,12 +49,116 @@ int		ft_toggle_raw(void)
 	return (1);
 }
 
+void	ft_init_cursor(t_cursor *cursor, int argc, t_list *list)
+{
+	struct winsize size;
+
+	ioctl(0, TIOCGWINSZ, &size);
+	cursor->str_len = argc * list->lenmax + (argc - 1);
+	cursor->pos = 0;
+	cursor->line = 0;
+	cursor->col_term = size.ws_col;
+	cursor->line_term = size.ws_row;
+}
+
+void	ft_left_right(t_cursor *cursor, t_list **current, char *str)
+{
+	(*current)->state = ((*current)->state == 1) ? (0) : (2);
+	if (str[2] == 'C') //droite
+	{
+		cursor->pos = (cursor->pos + (*current)->lenmax + 1) % cursor->str_len;
+		if ((*current)->next->len == -1)
+		{
+			(*current)->next->next->state = ((*current)->state == 0) ? (1) : (4);
+			*current = (*current)->next->next;
+		}
+		else
+		{
+			(*current)->next->state = ((*current)->state == 0) ? (1) : (4);
+			*current = (*current)->next;
+		}
+	}
+	else if (str[2] == 'D') //gauche
+	{
+		cursor->pos = (cursor->pos - (*current)->lenmax + 1) % cursor->str_len;
+		if ((*current)->prev->len == -1)
+		{
+			(*current)->prev->prev->state = ((*current)->state == 0) ? (1) : (4);
+			*current = (*current)->prev->prev;
+		}
+		else
+		{
+			(*current)->prev->state = ((*current)->state == 0) ? (1) : (4);
+			*current = (*current)->prev;
+		}
+	}
+}
+
+void	ft_detect_term(t_cursor *cursor, t_list **current, char *str)
+{
+	// SPACE -> ' '
+	// LEFT -> ^[[D
+	// RIGHT -> ^[[C
+	// ECHAP -> 0x1b
+	// DEL -> 0x7f
+	// BACKSPACE -> ^[[3~
+	if (str[0] == ' ' && str[1] == '\0')
+		(*current)->state = ((*current)->state == 0) ? (2) : (3) ; //selectionne
+	else if (str[0] == 0x7f && str[1] == '\0')
+		ft_putendl("SUPR"); // Supprime selection
+	else if (str[0] == 0x1b && str[1] == '\0')
+		exit(0); //quitte programme /!\ free
+	else if (ft_strncmp(str, "^[[", 3))
+	{
+		if (str[2] == 'D' || str[2] == 'C')
+			ft_left_right(cursor, current, str);
+		if (str[2] == '3')
+			ft_putendl("delete"); // Supprime selection
+	}
+}
+
+void	ft_read(t_list *list, int argc)
+{
+	int rd;
+	char buf[6];
+	t_list *current;
+	t_cursor cursor;
+
+	current = list;
+	ft_init_cursor(&cursor, argc, list);
+	ft_putstr("\r");
+	while (42)
+	{
+		rd = 0;
+		ft_bzero(buf, 0);
+		while (rd < 2) 
+		{
+			rd = read(0, &buf, 5);
+			buf[rd] = '\0';
+			if (buf[0] == 0x1b || buf[0] == ' ' || buf[0] == 0x7f)
+				break;
+		}
+		ft_detect_term(&cursor, &current, buf);
+		// fonction termcaps
+
+		// fonction refresh
+		while (list->len != -1)
+		{
+			ft_display(list);
+			list = list->next;
+		}
+		ft_putstr("\n");
+		list = list->next;
+
+		ft_putstr("\x1b[0k");
+		ft_putstr("\x1b[1A");
+	}
+}
+
 int main(int argc, char **argv)
 {
 	int i;
 	t_list *list;
-	int rd;
-	char buf[5];
 
 	list = NULL;
 	i = 0;
@@ -69,29 +173,12 @@ int main(int argc, char **argv)
 		ft_larger(&list);
 		list = list->next;
 		list->state = 1;
-		while (list->len != -1)
+		/*while (list->len != -1)
 		{
 			ft_display(list);
 			list = list->next;
-		}
-		while (42)
-		{
-			rd = 0;
-			while (rd < 2)
-				rd = read(0, &buf, 4);
-			while (list->len != -1)
-			{
-				ft_display(list);
-				list = list->next;
-			}
-			ft_putstr("\n");
-			list = list->next;
-			ft_putstr("\x1b[0K");
-			ft_putstr("\x1b[1A");
-		}
-			//afficher les mots en fonction de leur struct
-			//read
-			//deplacer curseur et modifier structure
+		}*/
+		ft_read(list, argc);
 	}
 	return (0);
 }

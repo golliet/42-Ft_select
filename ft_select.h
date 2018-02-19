@@ -6,7 +6,7 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 11:17:44 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/16 13:13:35 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/19 10:34:02 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <sys/ioctl.h>
 # include <term.h>
 # include <stdlib.h>
+# include <sys/ioctl.h>
 
 typedef struct s_list
 {
@@ -29,6 +30,15 @@ typedef struct s_list
 	struct s_list	*next;
 	struct s_list	*prev;
 } t_list;
+
+typedef struct	s_cursor
+{
+	int			str_len;
+	int			pos;
+	int			line;
+	int			col_term;
+	int			line_term;
+}				t_cursor;
 
 void	ft_list(t_list **list, char **argv);
 void	ft_display(t_list *list);
