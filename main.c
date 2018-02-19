@@ -6,7 +6,7 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 11:07:47 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/19 13:59:51 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/19 14:39:23 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,10 @@ void	ft_init_cursor(t_cursor *cursor, int argc, t_list *list)
 	cursor->col_term = size.ws_col;
 	cursor->line_term = size.ws_row;
 }
+
+// fonction void qui met/enleve les soulignage
+
+// fonction void qui met/enleve le surlignage
 
 void	ft_left_right(t_cursor *cursor, t_list **current, char *str)
 {
@@ -127,6 +131,7 @@ void	ft_read(t_list *list, int argc)
 	current = list;
 	ft_init_cursor(&cursor, argc, list);
 	ft_putstr("\r");
+	ft_putstr("\x1b[?25l");
 	while (42)
 	{
 		rd = 0;
@@ -173,11 +178,12 @@ int main(int argc, char **argv)
 		ft_larger(&list);
 		list = list->next;
 		list->state = 1;
-		/*while (list->len != -1)
+		while (list->len != -1)
 		{
 			ft_display(list);
 			list = list->next;
-		}*/
+		}
+			list = list->next;
 		ft_read(list, argc);
 	}
 	return (0);
