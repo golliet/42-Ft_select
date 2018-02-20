@@ -6,7 +6,7 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 11:39:08 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/15 16:39:31 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/20 09:41:42 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ void	ft_add_elem(t_list **list, t_list *head, char *str)
 	new->state = 0;
 	new->len = ft_strlen(str);
 	new->str = ft_strdup(str);
+	new->is_selected = 0;
 }
 
 // init

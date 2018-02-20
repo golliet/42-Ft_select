@@ -6,7 +6,7 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 11:17:44 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/19 10:34:02 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/20 09:41:12 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,15 +21,16 @@
 # include <stdlib.h>
 # include <sys/ioctl.h>
 
-typedef struct s_list
+typedef struct	s_list
 {
 	char			*str; //la chaine
 	int				len;   // la taille de la chaine
 	int				lenmax; // la taille de la plus grande chaine
 	int				state;  // l'etat de la chaine
+	int				is_selected; // Est selectionne ou pas
 	struct s_list	*next;
 	struct s_list	*prev;
-} t_list;
+}				t_list;
 
 typedef struct	s_cursor
 {

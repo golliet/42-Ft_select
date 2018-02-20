@@ -6,7 +6,7 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 11:07:47 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/19 14:39:23 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/20 09:47:38 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,24 +61,30 @@ void	ft_init_cursor(t_cursor *cursor, int argc, t_list *list)
 	cursor->line_term = size.ws_row;
 }
 
-// fonction void qui met/enleve les soulignage
-
-// fonction void qui met/enleve le surlignage
+void	ft_current(t_list **current)
+{
+	if ((*current)->state == 1)
+		(*current)->state = 0;
+	else if ((*current)->state == 3)
+		(*current)->state = 2;
+	else
+		(*current)->state = 2;
+}
 
 void	ft_left_right(t_cursor *cursor, t_list **current, char *str)
 {
-	(*current)->state = ((*current)->state == 1) ? (0) : (2);
+	ft_current(current);
 	if (str[2] == 'C') //droite
 	{
 		cursor->pos = (cursor->pos + (*current)->lenmax + 1) % cursor->str_len;
 		if ((*current)->next->len == -1)
 		{
-			(*current)->next->next->state = ((*current)->state == 0) ? (1) : (4);
+			(*current)->next->next->state = ((*current)->next->next->state == 0) ? (1) : (3);
 			*current = (*current)->next->next;
 		}
 		else
 		{
-			(*current)->next->state = ((*current)->state == 0) ? (1) : (4);
+			(*current)->next->state = ((*current)->next->state == 0) ? (1) : (3);
 			*current = (*current)->next;
 		}
 	}
@@ -87,15 +93,29 @@ void	ft_left_right(t_cursor *cursor, t_list **current, char *str)
 		cursor->pos = (cursor->pos - (*current)->lenmax + 1) % cursor->str_len;
 		if ((*current)->prev->len == -1)
 		{
-			(*current)->prev->prev->state = ((*current)->state == 0) ? (1) : (4);
+			(*current)->prev->prev->state = ((*current)->prev->prev->state == 0) ? (1) : (3);
 			*current = (*current)->prev->prev;
 		}
 		else
 		{
-			(*current)->prev->state = ((*current)->state == 0) ? (1) : (4);
+			(*current)->prev->state = ((*current)->prev->state == 0) ? (1) : (3);
 			*current = (*current)->prev;
 		}
 	}
+}
+
+void	ft_s(t_list **current)
+{
+		if ((*current)->state == 1)
+		{
+			(*current)->state = 3;
+			(*current)->is_selected = 1;
+		}
+		else if ((*current)->state == 3)
+		{
+			(*current)->state = 1;
+			(*current)->is_selected = 0;
+		}
 }
 
 void	ft_detect_term(t_cursor *cursor, t_list **current, char *str)
@@ -107,7 +127,7 @@ void	ft_detect_term(t_cursor *cursor, t_list **current, char *str)
 	// DEL -> 0x7f
 	// BACKSPACE -> ^[[3~
 	if (str[0] == ' ' && str[1] == '\0')
-		(*current)->state = ((*current)->state == 0) ? (2) : (3) ; //selectionne
+		ft_s(current);
 	else if (str[0] == 0x7f && str[1] == '\0')
 		ft_putendl("SUPR"); // Supprime selection
 	else if (str[0] == 0x1b && str[1] == '\0')
