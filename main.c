@@ -6,7 +6,7 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 11:07:47 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/20 14:55:24 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/20 15:13:51 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,15 @@ int		ft_toggle_raw(void)
 	struct termios	term;
 	char *env;
 
-	i = 0;
 	if (!(env = getenv("TERM")))
-		return (-1);
+	{
+		env = ft_strdup("xterm-256color");
+		i = 1;
+	}
 	if (tgetent(NULL, env) == ERR)
 		return (-1);
+	if (i == 1)
+		free(env);
 	if (tcgetattr(0, &term) == -1)
 		return (-1);
 	term.c_lflag &= ~(ICANON);
