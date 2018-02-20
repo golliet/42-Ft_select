@@ -6,7 +6,7 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 11:07:47 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/20 09:47:38 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/20 14:55:24 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,40 +104,41 @@ void	ft_left_right(t_cursor *cursor, t_list **current, char *str)
 	}
 }
 
-void	ft_s(t_list **current)
+void	ft_select_and_jump(t_list **current, t_cursor *cursor)
 {
 		if ((*current)->state == 1)
 		{
 			(*current)->state = 3;
 			(*current)->is_selected = 1;
+			ft_left_right(cursor, current, "^[C");
 		}
 		else if ((*current)->state == 3)
 		{
 			(*current)->state = 1;
 			(*current)->is_selected = 0;
+			ft_left_right(cursor, current, "^[C");
 		}
 }
 
-void	ft_detect_term(t_cursor *cursor, t_list **current, char *str)
+void	ft_detect_term(t_cursor *cursor, t_list **current, char *str, t_list *list)
 {
-	// SPACE -> ' '
-	// LEFT -> ^[[D
-	// RIGHT -> ^[[C
-	// ECHAP -> 0x1b
-	// DEL -> 0x7f
-	// BACKSPACE -> ^[[3~
 	if (str[0] == ' ' && str[1] == '\0')
-		ft_s(current);
+		ft_select_and_jump(current, cursor);
 	else if (str[0] == 0x7f && str[1] == '\0')
-		ft_putendl("SUPR"); // Supprime selection
+		ft_del(list, current, cursor);
 	else if (str[0] == 0x1b && str[1] == '\0')
 		exit(0); //quitte programme /!\ free
+	else if (str[0] == '\n')
+	{
+		ft_display_selection(list);
+		exit(0);
+	}
 	else if (ft_strncmp(str, "^[[", 3))
 	{
 		if (str[2] == 'D' || str[2] == 'C')
 			ft_left_right(cursor, current, str);
 		if (str[2] == '3')
-			ft_putendl("delete"); // Supprime selection
+			ft_del(list, current, cursor);
 	}
 }
 
@@ -160,13 +161,10 @@ void	ft_read(t_list *list, int argc)
 		{
 			rd = read(0, &buf, 5);
 			buf[rd] = '\0';
-			if (buf[0] == 0x1b || buf[0] == ' ' || buf[0] == 0x7f)
+			if (buf[0] == 0x1b || buf[0] == ' ' || buf[0] == 0x7f || buf[0] == '\n')
 				break;
 		}
-		ft_detect_term(&cursor, &current, buf);
-		// fonction termcaps
-
-		// fonction refresh
+		ft_detect_term(&cursor, &current, buf, list);
 		while (list->len != -1)
 		{
 			ft_display(list);
@@ -175,7 +173,7 @@ void	ft_read(t_list *list, int argc)
 		ft_putstr("\n");
 		list = list->next;
 
-		ft_putstr("\x1b[0k");
+		ft_putstr("\x1b[2K");
 		ft_putstr("\x1b[1A");
 	}
 }

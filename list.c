@@ -6,7 +6,7 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 11:39:08 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/20 09:41:42 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/20 12:24:02 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,24 @@
 
 // free list
 
+void	ft_free_node(t_list *list)
+{
+	free(list->str);
+	free(list);
+}
+
 // rm elem
 void	ft_del_elem(t_list **list, t_list *trash)
 {
-	while ((*list)->next != trash)
+	t_list *tmp;
+	while ((*list) != trash)
 		*list = (*list)->next;
-	(*list)->next = trash->next;
-	trash->next->prev = (*list);
-	free(trash); // faire une vraie fonction de free
+	tmp = *list;
+	(*list)->prev->next = (*list)->next;
+	(*list)->next->prev = (*list)->prev;
+	ft_free_node(tmp);
+	while ((*list)->prev->len != -1)
+		*list = (*list)->next;
 }
 
 // add elem
@@ -45,7 +55,7 @@ void	ft_init_list(t_list **list)
 {
 	if (!(*list = (t_list*)malloc(sizeof(t_list))))
 		return ;
-	(*list)->str = NULL;
+	(*list)->str = ft_strnew(1);
 	(*list)->len = -1;
 	(*list)->next = NULL;
 	(*list)->prev = NULL;

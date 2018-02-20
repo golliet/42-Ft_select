@@ -6,7 +6,7 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 14:59:25 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/19 13:38:23 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/20 12:21:11 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,19 @@
 #define NORMAL_UNDER "\033[4m"
 #define HIGHLIGHTED "\033[40;7m"
 #define HIGH_UNDER "\033[40;7;4m"
+
+void	ft_display_selection(t_list *list)
+{
+	while (list->len != -1)
+	{
+		if (list->is_selected == 1)
+		{
+			ft_putstr(list->str);
+			ft_putchar(' ');
+		}
+		list = list->next;
+	}
+}
 
 void	ft_display(t_list *list)
 {
@@ -31,7 +44,7 @@ void	ft_display(t_list *list)
 		write(0, HIGH_UNDER, 9);
 	ft_putstr_fd(list->str, 0);
 	while (++i < list->lenmax)
-		ft_putchar_fd(' ', 0); // plus tard avec term multiple strjoin
+		ft_putchar_fd(' ', 0);
 	write(0, STOP, 4);
 	ft_putstr_fd(" ", 0);
 }
