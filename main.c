@@ -6,7 +6,7 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 11:07:47 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/20 15:13:51 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/21 15:17:32 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,10 +131,14 @@ void	ft_detect_term(t_cursor *cursor, t_list **current, char *str, t_list *list)
 	else if (str[0] == 0x7f && str[1] == '\0')
 		ft_del(list, current, cursor);
 	else if (str[0] == 0x1b && str[1] == '\0')
+	{
+		ft_putstr("\x1b[?25h");
 		exit(0); //quitte programme /!\ free
+	}
 	else if (str[0] == '\n')
 	{
 		ft_display_selection(list);
+		ft_putstr("\x1b[?25h");
 		exit(0);
 	}
 	else if (ft_strncmp(str, "^[[", 3))
@@ -155,20 +159,22 @@ void	ft_read(t_list *list, int argc)
 
 	current = list;
 	ft_init_cursor(&cursor, argc, list);
-	ft_putstr("\r");
-	ft_putstr("\x1b[?25l");
+	ft_putstr("\r\x1b[?25l");
 	while (42)
 	{
 		rd = 0;
-		ft_bzero(buf, 0);
 		while (rd < 2) 
 		{
+			ft_bzero(buf, '\0');
 			rd = read(0, &buf, 5);
 			buf[rd] = '\0';
 			if (buf[0] == 0x1b || buf[0] == ' ' || buf[0] == 0x7f || buf[0] == '\n')
 				break;
 		}
-		ft_detect_term(&cursor, &current, buf, list);
+		if (g_lol == 1)
+			g_lol = 0;
+		else
+			ft_detect_term(&cursor, &current, buf, list);
 		while (list->len != -1)
 		{
 			ft_display(list);
@@ -176,10 +182,29 @@ void	ft_read(t_list *list, int argc)
 		}
 		ft_putstr("\n");
 		list = list->next;
-
 		ft_putstr("\x1b[2K");
 		ft_putstr("\x1b[1A");
 	}
+}
+
+void	sig_c(int n)
+{
+	ft_putstr("\x1b[?25h");
+	//free
+	exit(0);
+}
+
+void	sig_z(int n)
+{
+	struct termios term;
+	g_lol = 1;
+
+	tcgetattr(0, &term);
+	term.c_lflag &= ~(ICANON);
+	term.c_lflag &= ~(ECHO);
+	term.c_cc[VMIN] = 1;
+	term.c_cc[VTIME] = 0;
+	tcsetattr(0, TCSADRAIN, &term);
 }
 
 int main(int argc, char **argv)
@@ -187,6 +212,10 @@ int main(int argc, char **argv)
 	int i;
 	t_list *list;
 
+
+	g_lol = 0;
+	signal(SIGINT, sig_c);
+	signal(SIGCONT, sig_z);
 	list = NULL;
 	i = 0;
 	if (argc > 1)
@@ -205,7 +234,7 @@ int main(int argc, char **argv)
 			ft_display(list);
 			list = list->next;
 		}
-			list = list->next;
+		list = list->next;
 		ft_read(list, argc);
 	}
 	return (0);

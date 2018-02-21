@@ -6,12 +6,12 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 11:17:44 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/20 14:48:32 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/21 14:18:06 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FT_SELECT
-# define FT_SELECT
+#ifndef FT_SELECT_H
+# define FT_SELECT_H
 
 # include <stdlib.h>
 # include <termios.h>
@@ -31,6 +31,8 @@ typedef struct	s_list
 	struct s_list	*next;
 	struct s_list	*prev;
 }				t_list;
+
+int				g_lol;
 
 typedef struct	s_cursor
 {

@@ -6,7 +6,7 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/20 12:29:25 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/20 15:07:54 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/21 10:07:47 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,10 @@ void		ft_del(t_list *list, t_list **current, t_cursor *cursor)
 	t_list *tmp;
 
 	if (ft_empty_list(list) == 0)
+	{
+		ft_putstr("\x1b[?25h");
 		exit(0);
+	}
 	tmp = (*current)->next;
 	ft_del_elem(&list, *current);
 	if ((*current)->next->len != -1)

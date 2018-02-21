@@ -6,7 +6,7 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 14:59:25 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/20 12:21:11 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/21 14:51:54 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,9 @@ void	ft_display(t_list *list)
 {
 	int i;
 
+	if (ft_strlen(list->str) == 0)
+		return ;
+	ft_putstr_fd("[", 0);
 	i = list->len - 1;
 	if (list->state == 1)
 		write(0, NORMAL_UNDER, 4);
@@ -46,6 +49,7 @@ void	ft_display(t_list *list)
 	while (++i < list->lenmax)
 		ft_putchar_fd(' ', 0);
 	write(0, STOP, 4);
+	ft_putstr_fd("]", 0);
 	ft_putstr_fd(" ", 0);
 }
 
