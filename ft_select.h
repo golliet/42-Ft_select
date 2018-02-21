@@ -6,7 +6,7 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 11:17:44 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/21 14:18:06 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/21 16:43:52 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,6 @@ typedef struct	s_list
 	struct s_list	*prev;
 }				t_list;
 
-int				g_lol;
-
 typedef struct	s_cursor
 {
 	int			str_len;
@@ -41,14 +39,17 @@ typedef struct	s_cursor
 	int			line;
 	int			col_term;
 	int			line_term;
+	int			global;
 }				t_cursor;
+
+t_cursor		*g_cursor;
 
 void			ft_list(t_list **list, char **argv);
 void			ft_display(t_list *list);
 void			ft_display_selection(t_list *list);
 void			ft_del_elem(t_list **list, t_list *trash);
 void			ft_free_node(t_list *list);
-void			ft_del(t_list *list, t_list **current, t_cursor *cursor);
-void			ft_left_right(t_cursor *cursor, t_list **current, char *str);
+void			ft_del(t_list *list, t_list **current);
+void			ft_left_right(t_list **current, char *str);
 
 #endif
