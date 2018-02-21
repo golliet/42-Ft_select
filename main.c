@@ -6,7 +6,7 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 11:07:47 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/21 15:17:32 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/21 15:41:23 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,7 +163,7 @@ void	ft_read(t_list *list, int argc)
 	while (42)
 	{
 		rd = 0;
-		while (rd < 2) 
+		while (rd < 2 && g_lol == 0)
 		{
 			ft_bzero(buf, '\0');
 			rd = read(0, &buf, 5);
