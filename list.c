@@ -6,7 +6,7 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 11:39:08 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/21 14:56:30 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/22 14:38:11 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,11 @@ void	ft_free_node(t_list *list)
 // rm elem
 void	ft_del_elem(t_list **list, t_list *trash)
 {
-	t_list *tmp;
-	while ((*list) != trash)
+	while ((*list)->next != trash)
 		*list = (*list)->next;
-	tmp = *list;
-	(*list)->prev->next = (*list)->next;
-	(*list)->next->prev = (*list)->prev;
-	ft_free_node(tmp);
+	(*list)->next = trash->next;
+	(*list)->next->prev = trash->prev;
+	ft_free_node(trash);
 	while ((*list)->prev->len != -1)
 		*list = (*list)->next;
 }
@@ -54,11 +52,12 @@ void	ft_add_elem(t_list **list, t_list *head, char *str)
 void	ft_init_list(t_list **list)
 {
 	if (!(*list = (t_list*)malloc(sizeof(t_list))))
-		return ;
-	(*list)->str = ft_strnew(1);
+		exit(EXIT_FAILURE);
+	(*list)->str = NULL;
 	(*list)->len = -1;
 	(*list)->next = NULL;
 	(*list)->prev = NULL;
+	(*list)->lenmax = 0;
 }
 
 // une fonction qui check si le truc est vide, si oui alors init sinon addelem

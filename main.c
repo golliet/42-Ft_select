@@ -6,7 +6,7 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 11:07:47 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/21 16:46:26 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/22 14:57:49 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ void	ft_larger(t_list **list)
 			larger = tmp->len;
 	while ((tmp = tmp->next) && tmp->len != -1)
 		tmp->lenmax = larger;
+	*list = (*list)->next;
 }
 
 int		ft_toggle_raw(void)
@@ -58,11 +59,13 @@ void	ft_init_cursor(int argc, t_list *list)
 	struct winsize size;
 
 	ioctl(0, TIOCGWINSZ, &size);
-	g_cursor->str_len = argc * list->lenmax + (argc - 1);
-	g_cursor->pos = 0;
-	g_cursor->line = 0;
+	g_cursor->lenmax = list->lenmax;
 	g_cursor->col_term = size.ws_col;
 	g_cursor->line_term = size.ws_row;
+	g_cursor->argc = argc;
+	g_cursor->str_len = g_cursor->argc * (list->lenmax + 5) + (argc - 1);
+	g_cursor->pos = 0;
+	g_cursor->line = ft_nb_line(g_cursor->str_len, g_cursor->col_term);
 }
 
 void	ft_current(t_list **current)
@@ -124,7 +127,7 @@ void	ft_select_and_jump(t_list **current)
 		}
 }
 
-void	ft_detect_term(t_list **current, char *str, t_list *list)
+void	ft_detect_term(t_list **current, char *str, t_list **list)
 {
 	if (str[0] == ' ' && str[1] == '\0')
 		ft_select_and_jump(current);
@@ -137,7 +140,7 @@ void	ft_detect_term(t_list **current, char *str, t_list *list)
 	}
 	else if (str[0] == '\n')
 	{
-		ft_display_selection(list);
+		ft_display_selection(*list);
 		ft_putstr("\x1b[?25h");
 		exit(0);
 	}
@@ -150,6 +153,36 @@ void	ft_detect_term(t_list **current, char *str, t_list *list)
 	}
 }
 
+void	ft_delete_line(int n)
+{
+	int i;
+
+	i = 0;
+	while (i < n)
+	{
+		ft_putstr_fd("\r\x1b[2K", 0);
+		if (n != 1)
+			ft_putstr_fd("\x1b[1A", 0);
+		i++;
+		ft_putstr_fd("\r\x1b[2K", 0);
+	}
+}
+
+void	ft_read_display(t_list *list)
+{
+	if (g_cursor->line == 1)
+	{
+		while (list->len != -1)
+		{
+			ft_display(list);
+			list = list->next;
+		}
+		list = list->next;
+	}
+	else
+		ft_display_multiple(list);
+}
+
 void	ft_read(t_list *list, int argc)
 {
 	int rd;
@@ -157,11 +190,11 @@ void	ft_read(t_list *list, int argc)
 	t_list *current;
 
 	current = list;
-	ft_init_cursor(argc, list);
-	ft_putstr("\r\x1b[?25l");
+	ft_putstr_fd("\r\x1b[?25l", 0);
 	while (42)
 	{
 		rd = 0;
+		g_cursor->list = list;
 		while (rd < 2 && g_cursor->global == 0)
 		{
 			ft_bzero(buf, '\0');
@@ -170,45 +203,13 @@ void	ft_read(t_list *list, int argc)
 			if (buf[0] == 0x1b || buf[0] == ' ' || buf[0] == 0x7f || buf[0] == '\n')
 				break;
 		}
+		ft_delete_line(g_cursor->line);
 		if (g_cursor->global == 1)
 			g_cursor->global = 0;
 		else
-			ft_detect_term(&current, buf, list);
-		while (list->len != -1)
-		{
-			ft_display(list);
-			list = list->next;
-		}
-		ft_putstr("\n");
-		list = list->next;
-		ft_putstr("\x1b[2K");
-		ft_putstr("\x1b[1A");
+			ft_detect_term(&current, buf, &list);
+		ft_read_display(list);
 	}
-}
-
-void	sig_c(int n)
-{
-	ft_putstr("\x1b[?25h");
-	//free
-	exit(0);
-}
-
-void	sig_z(int n)
-{
-	struct termios term;
-	g_cursor->global = 1;
-
-	tcgetattr(0, &term);
-	term.c_lflag &= ~(ICANON);
-	term.c_lflag &= ~(ECHO);
-	term.c_cc[VMIN] = 1;
-	term.c_cc[VTIME] = 0;
-	tcsetattr(0, TCSADRAIN, &term);
-}
-
-void	sig_w(int n)
-{
-	ft_putendl("STOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOP !");
 }
 
 int main(int argc, char **argv)
@@ -232,14 +233,19 @@ int main(int argc, char **argv)
 		}
 		ft_list(&list, argv);
 		ft_larger(&list);
-		list = list->next;
 		list->state = 1;
-		while (list->len != -1)
+		ft_init_cursor(argc, list);
+		if (g_cursor->line == 1)
 		{
-			ft_display(list);
+			while (list->len != -1)
+			{
+				ft_display(list);
+				list = list->next;
+			}
 			list = list->next;
 		}
-		list = list->next;
+		else
+			ft_display_multiple(list);
 		ft_read(list, argc);
 	}
 	return (0);

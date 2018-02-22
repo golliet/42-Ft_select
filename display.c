@@ -6,7 +6,7 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 14:59:25 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/21 16:22:10 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/22 14:31:36 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 #define NORMAL_UNDER "\033[4m"
 #define HIGHLIGHTED "\033[40;7m"
 #define HIGH_UNDER "\033[40;7;4m"
-#define BLUE "\033[34;1m"
 #define LBLUE "\033[36m"
 
 /*
@@ -45,11 +44,9 @@ void	ft_display(t_list *list)
 {
 	int i;
 
-	if (ft_strlen(list->str) == 0)
+	if (list->str == NULL || list->len == -1)
 		return ;
-	ft_putstr_fd(BLUE, 0);
-	ft_putstr_fd("[> ", 0);
-	ft_putstr_fd(STOP, 0);
+	ft_putstr_fd("\033[34;1m[> \033[0m", 0);
 	i = list->len - 1;
 	if (list->state == 1)
 		ft_putstr_fd(NORMAL_UNDER, 0);
@@ -58,12 +55,38 @@ void	ft_display(t_list *list)
 	else if (list->state == 3)
 		ft_putstr_fd(HIGH_UNDER, 0);
 	ft_putstr_fd(LBLUE, 0);
-	ft_putstr_fd(list->str, 0);
-	while (++i < list->lenmax)
+	while (list->lenmax > 0 && ++i < list->lenmax)
 		ft_putchar_fd(' ', 0);
+	ft_putstr_fd(list->str, 0);
 	ft_putstr_fd(STOP, 0);
-	ft_putstr_fd(BLUE, 0);
-	ft_putstr_fd("]", 0);
-	ft_putstr_fd(STOP, 0);
-	ft_putstr_fd(" ", 0);
+	ft_putstr_fd("\033[34;1m] \033[0m ", 0);
+}
+
+void	ft_display_multiple(t_list *list)
+{
+	int l;
+	int j;
+	int k;
+	t_list *head;
+
+	j = 0;
+	while (j < g_cursor->line)
+	{
+		l = 1;
+		k = 1;
+		head = list;
+		l += j;
+		while (l <= g_cursor->argc - 1)
+		{
+			while (head->len != -1 && k != l)
+			{
+				head = head->next;
+				k++;
+			}
+			ft_display(head);
+			l += g_cursor->line;
+		}
+		ft_putchar_fd('\n', 0);
+		j++;
+	}
 }
