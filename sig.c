@@ -6,7 +6,7 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/21 09:58:56 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/22 15:13:01 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/22 16:10:12 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ int		ft_nb_line(int len, int col)
 void	sig_w(int n)
 {
 	struct winsize size;
-	static int a = 0;
 	int i;
 
 	i = ft_nb_line(g_cursor->str_len, g_cursor->col_term);
@@ -70,5 +69,6 @@ void	sig_w(int n)
 		g_cursor->str_len = g_cursor->argc * (g_cursor->lenmax + 5) + (g_cursor->argc - 1);
 		ft_delete_line(i);
 		ft_read_display(g_cursor->list);
+		printf("lignes : %d\n", g_cursor->line);
 	}
 }
