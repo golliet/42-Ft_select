@@ -6,7 +6,7 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 14:59:25 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/23 13:17:35 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/23 14:16:15 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 
 void	ft_display_selection(t_list *list)
 {
+	write(0, tgetstr("cl", 0), ft_strlen(tgetstr("cl", 0)));
 	while (list->len != -1)
 	{
 		if (list->is_selected == 1)

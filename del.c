@@ -6,7 +6,7 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/20 12:29:25 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/23 13:10:41 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/23 14:19:42 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ void		ft_del(t_list **list, t_list **current)
 {
 	if (ft_empty_list(*list) == 0)
 	{
+		write(0, tgetstr("cl", 0), ft_strlen(tgetstr("cl", 0)));
 		ft_putstr_fd("\x1b[?25h", 0);
 		exit(0);
 	}
@@ -41,7 +42,7 @@ void		ft_del(t_list **list, t_list **current)
 		ft_left_right(current, "^[C");
 	else
 		ft_left_right(current, "^[D");
-	ft_putstr_fd("\x1b[0J", 0);
+	write(0, tgetstr("cl", 0), ft_strlen(tgetstr("cl", 0)));
 	g_cursor->argc -= 1;
 	ft_calculate();
 }

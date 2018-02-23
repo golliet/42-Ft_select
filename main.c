@@ -6,7 +6,7 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 11:07:47 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/23 13:19:48 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/23 14:15:30 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,20 +150,6 @@ void	ft_detect_term(t_list **current, char *str, t_list **list)
 	}
 }
 
-void	ft_delete_line(int n)
-{
-	int i;
-
-	i = 1;
-	while (i < n)
-	{
-		ft_putstr_fd("\r\x1b[2K", 0);
-		ft_putstr_fd("\x1b[1A", 0);
-		i++;
-	}
-	ft_putstr_fd("\r\x1b[2K", 0);
-}
-
 void	ft_read_display(t_list *list)
 {
 	if (g_cursor->line == 1)
@@ -186,7 +172,7 @@ void	ft_read(t_list *list, int argc)
 	t_list *current;
 
 	current = list;
-	//ft_putstr_fd("\x1b[?25l", 0);
+	ft_putstr_fd("\x1b[?25l", 0);
 	while (42)
 	{
 		rd = 0;
@@ -203,7 +189,7 @@ void	ft_read(t_list *list, int argc)
 			g_cursor->global = 0;
 		else
 			ft_detect_term(&current, buf, &list);
-		ft_delete_line(g_cursor->line);
+		write(0, tgetstr("cl", 0), ft_strlen(tgetstr("cl", 0)));
 		ft_read_display(list);
 	}
 }
@@ -222,11 +208,8 @@ int main(int argc, char **argv)
 	i = 0;
 	if (argc > 1)
 	{
-		if (!(ft_toggle_raw()))
-		{
-			ft_putendl_fd("OSCOUR JEANNE !", 2);
-			return (-1);
-		}
+		ft_toggle_raw();
+		write(0, tgetstr("cl", 0), ft_strlen(tgetstr("cl", 0)));
 		ft_list(&list, argv);
 		ft_larger(&list);
 		list->state = 1;
