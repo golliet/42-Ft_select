@@ -6,7 +6,7 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/21 09:58:56 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/22 16:10:12 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/23 13:20:27 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 void	sig_c(int n)
 {
-	ft_putstr("\x1b[?25h");
+	ft_putstr_fd("\x1b[?25h", 0);
 	//free
 	exit(0);
 }
@@ -51,9 +51,9 @@ void	sig_w(int n)
 	struct winsize size;
 	int i;
 
-	i = ft_nb_line(g_cursor->str_len, g_cursor->col_term);
+	i = g_cursor->line;
 	ioctl(0, TIOCGWINSZ, &size);
-	if (size.ws_col < 80)
+	if (size.ws_col < (g_cursor->lenmax + 5) * 2)
 	{
 		ft_delete_line(i);
 		int lol = -1;
@@ -64,11 +64,10 @@ void	sig_w(int n)
 	{
 		g_cursor->col_term = size.ws_col;
 		g_cursor->line_term = size.ws_row;
-		g_cursor->line = ft_nb_line(g_cursor->str_len, g_cursor->col_term);
 		g_cursor->global = 1;
-		g_cursor->str_len = g_cursor->argc * (g_cursor->lenmax + 5) + (g_cursor->argc - 1);
+		ft_calculate();
 		ft_delete_line(i);
 		ft_read_display(g_cursor->list);
-		printf("lignes : %d\n", g_cursor->line);
+		//printf("lignes : %d\n", g_cursor->line);
 	}
 }

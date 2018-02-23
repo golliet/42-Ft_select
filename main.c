@@ -6,7 +6,7 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 11:07:47 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/22 14:57:49 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/23 13:19:48 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,8 +64,7 @@ void	ft_init_cursor(int argc, t_list *list)
 	g_cursor->line_term = size.ws_row;
 	g_cursor->argc = argc;
 	g_cursor->str_len = g_cursor->argc * (list->lenmax + 5) + (argc - 1);
-	g_cursor->pos = 0;
-	g_cursor->line = ft_nb_line(g_cursor->str_len, g_cursor->col_term);
+	ft_calculate();
 }
 
 void	ft_current(t_list **current)
@@ -83,7 +82,6 @@ void	ft_left_right(t_list **current, char *str)
 	ft_current(current);
 	if (str[2] == 'C') //droite
 	{
-		g_cursor->pos = (g_cursor->pos + (*current)->lenmax + 1) % g_cursor->str_len;
 		if ((*current)->next->len == -1)
 		{
 			(*current)->next->next->state = ((*current)->next->next->state == 0) ? (1) : (3);
@@ -97,7 +95,6 @@ void	ft_left_right(t_list **current, char *str)
 	}
 	else if (str[2] == 'D') //gauche
 	{
-		g_cursor->pos = (g_cursor->pos - (*current)->lenmax + 1) % g_cursor->str_len;
 		if ((*current)->prev->len == -1)
 		{
 			(*current)->prev->prev->state = ((*current)->prev->prev->state == 0) ? (1) : (3);
@@ -135,13 +132,13 @@ void	ft_detect_term(t_list **current, char *str, t_list **list)
 		ft_del(list, current);
 	else if (str[0] == 0x1b && str[1] == '\0')
 	{
-		ft_putstr("\x1b[?25h");
+		ft_putstr_fd("\x1b[?25h", 0);
 		exit(0); //quitte programme /!\ free
 	}
 	else if (str[0] == '\n')
 	{
 		ft_display_selection(*list);
-		ft_putstr("\x1b[?25h");
+		ft_putstr_fd("\x1b[?25h", 0);
 		exit(0);
 	}
 	else if (ft_strncmp(str, "^[[", 3))
@@ -157,15 +154,14 @@ void	ft_delete_line(int n)
 {
 	int i;
 
-	i = 0;
+	i = 1;
 	while (i < n)
 	{
 		ft_putstr_fd("\r\x1b[2K", 0);
-		if (n != 1)
-			ft_putstr_fd("\x1b[1A", 0);
+		ft_putstr_fd("\x1b[1A", 0);
 		i++;
-		ft_putstr_fd("\r\x1b[2K", 0);
 	}
+	ft_putstr_fd("\r\x1b[2K", 0);
 }
 
 void	ft_read_display(t_list *list)
@@ -190,7 +186,7 @@ void	ft_read(t_list *list, int argc)
 	t_list *current;
 
 	current = list;
-	ft_putstr_fd("\r\x1b[?25l", 0);
+	//ft_putstr_fd("\x1b[?25l", 0);
 	while (42)
 	{
 		rd = 0;
@@ -203,11 +199,11 @@ void	ft_read(t_list *list, int argc)
 			if (buf[0] == 0x1b || buf[0] == ' ' || buf[0] == 0x7f || buf[0] == '\n')
 				break;
 		}
-		ft_delete_line(g_cursor->line);
 		if (g_cursor->global == 1)
 			g_cursor->global = 0;
 		else
 			ft_detect_term(&current, buf, &list);
+		ft_delete_line(g_cursor->line);
 		ft_read_display(list);
 	}
 }
@@ -235,17 +231,7 @@ int main(int argc, char **argv)
 		ft_larger(&list);
 		list->state = 1;
 		ft_init_cursor(argc, list);
-		if (g_cursor->line == 1)
-		{
-			while (list->len != -1)
-			{
-				ft_display(list);
-				list = list->next;
-			}
-			list = list->next;
-		}
-		else
-			ft_display_multiple(list);
+		ft_read_display(list);
 		ft_read(list, argc);
 	}
 	return (0);

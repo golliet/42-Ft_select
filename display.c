@@ -6,7 +6,7 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 14:59:25 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/22 14:31:36 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/23 13:17:35 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,10 +59,10 @@ void	ft_display(t_list *list)
 		ft_putchar_fd(' ', 0);
 	ft_putstr_fd(list->str, 0);
 	ft_putstr_fd(STOP, 0);
-	ft_putstr_fd("\033[34;1m] \033[0m ", 0);
+	ft_putstr_fd("\033[34;1m] \033[0m", 0);
 }
 
-void	ft_display_multiple(t_list *list)
+/*void	ft_display_multiple(t_list *list)
 {
 	int l;
 	int j;
@@ -88,5 +88,50 @@ void	ft_display_multiple(t_list *list)
 		}
 		ft_putchar_fd('\n', 0);
 		j++;
+	}
+}*/
+
+/*
+** Function who will calculate number of word in one row, and number of row
+*/
+
+int		ft_round(double a)
+{
+	int b;
+
+	b = a;
+	//printf("a: %f b:%d\n", a,b);
+	if (a - b > 0)
+		return (b + 1);
+	else if (a - b == 0)
+		return (b);
+	else
+		return (0);
+}
+
+void	ft_calculate(void)
+{
+	int i;
+
+	i = 0;
+	while ((i * (g_cursor->lenmax + 5)) < g_cursor->col_term - 20)
+		i++;
+	g_cursor->line = ft_round((double)g_cursor->argc / ((double)i));
+	//printf("line :%d\n", g_cursor->line);
+	g_cursor->nb_word_line = i;
+}
+
+void	ft_display_multiple(t_list *list)
+{
+	int i;
+
+	i = 0;
+	while (list->len != -1)
+	{
+		ft_display(list);
+		if ((i + 1) % g_cursor->nb_word_line == 0)
+			ft_putchar_fd('\n', 0);
+		list = list->next;
+		i++;
 	}
 }
