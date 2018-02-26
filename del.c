@@ -6,7 +6,7 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/20 12:29:25 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/23 14:19:42 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/26 12:33:36 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,8 @@
 
 static int	ft_empty_list(t_list *list)
 {
-	t_list *tmp;
-	int i;
+	t_list	*tmp;
+	int		i;
 
 	i = 0;
 	tmp = list;
@@ -25,7 +25,7 @@ static int	ft_empty_list(t_list *list)
 		i++;
 		tmp = tmp->next;
 	}
-	return ((i == 0) ? (0) : (1) );
+	return ((i == 0) ? (0) : (1));
 }
 
 void		ft_del(t_list **list, t_list **current)

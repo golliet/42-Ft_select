@@ -6,7 +6,7 @@
 #    By: golliet <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/12/04 15:26:08 by golliet           #+#    #+#              #
-#    Updated: 2018/02/21 09:59:37 by golliet          ###   ########.fr        #
+#    Updated: 2018/02/26 13:18:27 by golliet          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@
 
 NAME = ft_select
 
-SRC = main.c list.c display.c del.c sig.c
+SRC = main.c list.c display.c del.c sig.c read.c term.c
 
 OBJ = $(SRC:.c=.o)
 

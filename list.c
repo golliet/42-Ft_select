@@ -6,14 +6,12 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 11:39:08 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/23 13:56:08 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/26 12:36:01 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_select.h"
 #include "libft/libft.h"
-
-// free list
 
 void	ft_free_node(t_list *list)
 {
@@ -21,7 +19,6 @@ void	ft_free_node(t_list *list)
 	free(list);
 }
 
-// rm elem
 void	ft_del_elem(t_list **list, t_list *trash)
 {
 	while ((*list)->next != trash)
@@ -33,10 +30,10 @@ void	ft_del_elem(t_list **list, t_list *trash)
 		*list = (*list)->next;
 }
 
-// add elem
 void	ft_add_elem(t_list **list, t_list *head, char *str)
 {
 	t_list *new;
+
 	if (!(new = (t_list*)malloc(sizeof(t_list))))
 		return ;
 	(*list)->next = new;
@@ -48,7 +45,6 @@ void	ft_add_elem(t_list **list, t_list *head, char *str)
 	new->is_selected = 0;
 }
 
-// init
 void	ft_init_list(t_list **list)
 {
 	if (!(*list = (t_list*)malloc(sizeof(t_list))))
@@ -60,22 +56,20 @@ void	ft_init_list(t_list **list)
 	(*list)->lenmax = 0;
 }
 
-// une fonction qui check si le truc est vide, si oui alors init sinon addelem
-
 void	ft_list(t_list **list, char **argv)
 {
 	t_list	*head;
 	int		i;
 
 	i = 0;
-	ft_init_list(list); // init
+	ft_init_list(list);
 	head = *list;
 	while (argv[++i])
 	{
-		ft_add_elem(list, head,argv[i]);
+		ft_add_elem(list, head, argv[i]);
 		*list = (*list)->next;
 		if (!argv[i + 1])
-			head->prev = *list; // finir la boucle prev
+			head->prev = *list;
 	}
 	*list = (*list)->next;
 }
