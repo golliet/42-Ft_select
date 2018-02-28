@@ -6,7 +6,7 @@
 #    By: golliet <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/12/04 15:26:08 by golliet           #+#    #+#              #
-#    Updated: 2018/02/26 13:18:27 by golliet          ###   ########.fr        #
+#    Updated: 2018/02/27 13:25:04 by golliet          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,12 +20,16 @@ OBJ = $(SRC:.c=.o)
 
 FLAG = -Werror -Wextra -Wall -ltermcap
 
-all: $(NAME)
+LIB = libft/libft.a
+
+all: $(LIB) $(NAME)
+
+$(LIB) :
+	make -C libft/
 
 $(NAME) : $(OBJ)
 	echo "\033[1;31m"Compilation"\033[0m"
-	make -C libft/
-	gcc -o $(NAME) $(FLAG) $(OBJ) libft/libft.a
+	gcc -o $(NAME) $(FLAG) $(OBJ) $(LIB)
 
 clean :
 	echo "\033[1;35m"Cleaning"\033[0m"
@@ -39,3 +43,5 @@ fclean :
 	make fclean -C libft/
 
 re: fclean all
+
+.PHONY: all, clean, fclean, re, $(LIB)

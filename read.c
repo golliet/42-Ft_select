@@ -6,7 +6,7 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 12:59:54 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/26 13:17:20 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/28 10:39:20 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,13 @@ static void		ft_detect_term(t_list **current, char *str, t_list **list)
 		ft_del(list, current);
 	else if (str[0] == 0x1b && str[1] == '\0')
 	{
+		write(0, tgetstr("cl", 0), ft_strlen(tgetstr("cl", 0)));
 		ft_putstr_fd("\x1b[?25h", 0);
 		exit(0);
 	}
 	else if (str[0] == '\n')
 	{
+		write(0, tgetstr("cl", 0), ft_strlen(tgetstr("cl", 0)));
 		ft_display_selection(*list);
 		ft_putstr_fd("\x1b[?25h", 0);
 		exit(0);

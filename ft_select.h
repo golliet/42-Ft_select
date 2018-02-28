@@ -6,7 +6,7 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 11:17:44 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/26 13:12:15 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/28 13:20:29 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ typedef struct		s_cursor
 	int				nb_word_line;
 	int				sizemax;
 	t_list			*list;
+	struct termios	*old_term;
 }					t_cursor;
 
 t_cursor			*g_cursor;
@@ -64,7 +65,7 @@ void				ft_read(t_list *list, int argc);
 ** Signal
 */
 
-void				sig_c(int n);
+void	sig_hdl(int s);
 void				sig_z(int n);
 void				sig_w(int n);
 int					ft_nb_line(int len, int col);

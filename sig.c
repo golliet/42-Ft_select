@@ -6,18 +6,12 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/21 09:58:56 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/26 12:38:51 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/28 13:23:32 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_select.h"
 #include "libft/libft.h"
-
-void	sig_c(int n)
-{
-	ft_putstr_fd("\x1b[?25h", 0);
-	exit(0);
-}
 
 void	sig_z(int n)
 {
@@ -27,9 +21,7 @@ void	sig_z(int n)
 	tcgetattr(0, &term);
 	term.c_lflag &= ~(ICANON);
 	term.c_lflag &= ~(ECHO);
-	term.c_cc[VMIN] = 1;
-	term.c_cc[VTIME] = 0;
-	tcsetattr(0, TCSADRAIN, &term);
+	tcsetattr(0, TCSANOW, &term);
 	write(0, tgetstr("cl", 0), ft_strlen(tgetstr("cl", 0)));
 	ft_putstr_fd("\x1b[?25l", 0);
 	ft_display_multiple(g_cursor->list);
@@ -75,12 +67,49 @@ void	sig_tstp(int n)
 	tcgetattr(0, &term);
 	term.c_lflag &= ~(ICANON);
 	term.c_lflag &= ~(ECHO);
-	term.c_cc[VMIN] = 1;
-	term.c_cc[VTIME] = 0;
 	tcsetattr(0, TCSANOW, &term);
-	if (n == SIGSTOP)
-		sig_c(n);
 	ft_putstr_fd("\x1b[?25h", 0);
+	write(0, tgetstr("cl", 0), ft_strlen(tgetstr("cl", 0)));
 	ioctl(0, TIOCSTI, (char[2]) {term.c_cc[VSUSP], 0});
 	signal(SIGTSTP, SIG_DFL);
+}
+
+void	ft_end()
+{
+	struct termios term;
+	char  *name;
+
+	if ((name = getenv("TERM")) == NULL)
+		return ;
+	if (tgetent(NULL, name) != 1)
+		return ;
+	if (tcgetattr(0, &term) == -1)
+		return ;
+	term.c_lflag &= ICANON;
+	term.c_lflag &= ECHO;
+	if (tcsetattr(0, TCSANOW, &term) == -1)
+		return ;
+	exit(EXIT_FAILURE);
+}
+
+void	sig_hdl(int s)
+{
+	if (s == SIGINT || s == SIGQUIT || s == SIGKILL || s == SIGTERM || s == SIGABRT || s == SIGSEGV)
+	{
+		ft_putstr_fd("\x1b[?25h", 0);
+		write(0, tgetstr("cl", 0), ft_strlen(tgetstr("cl", 0)));
+
+		tcsetattr(0, TCSANOW, g_cursor->old_term);
+		exit(1);
+		//ft_end();
+	}
+	else if (s == SIGWINCH)
+		sig_w(s);
+	else if (s == SIGCONT)
+	{
+		sig_z(s);
+		signal(SIGTSTP, sig_hdl);
+	}
+	else if (s == SIGTSTP)
+		sig_tstp(s);
 }

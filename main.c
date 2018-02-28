@@ -6,7 +6,7 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 11:07:47 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/26 13:19:32 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/28 13:21:52 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,27 +30,24 @@ void	ft_larger(t_list **list)
 
 int		ft_toggle_raw(void)
 {
-	int				i;
 	struct termios	term;
 	char			*env;
 
 	if (!(env = getenv("TERM")))
-	{
-		env = ft_strdup("xterm-256color");
-		i = 1;
-	}
-	if (tgetent(NULL, env) == ERR)
-		return (-1);
-	if (i == 1)
-		free(env);
+		exit(EXIT_FAILURE);
+	if (ft_strlen(env) == 0)
+		exit(EXIT_FAILURE);
+	if (tgetent(NULL, env) != 1)
+		exit(EXIT_FAILURE);
 	if (tcgetattr(0, &term) == -1)
-		return (-1);
+		exit(EXIT_FAILURE);
+	g_cursor->old_term = (struct termios *)malloc(sizeof(struct termios));
+	if (tcgetattr(0, g_cursor->old_term) == -1)
+		exit(EXIT_FAILURE);
 	term.c_lflag &= ~(ICANON);
 	term.c_lflag &= ~(ECHO);
-	term.c_cc[VMIN] = 1;
-	term.c_cc[VTIME] = 0;
-	if (tcsetattr(0, TCSADRAIN, &term) == -1)
-		return (-1);
+	if (tcsetattr(0, TCSANOW, &term) == -1)
+		exit(EXIT_FAILURE);
 	return (1);
 }
 
@@ -89,17 +86,17 @@ int		main(int argc, char **argv)
 {
 	int		i;
 	t_list	*list;
+	int j;
 
-	g_cursor = malloc(sizeof(t_list));
-	g_cursor->global = 0;
-	signal(SIGINT, sig_c);
-	signal(SIGWINCH, sig_w);
-	signal(SIGCONT, sig_z);
-	signal(SIGTSTP, sig_tstp);
-	list = NULL;
-	i = 0;
 	if (argc > 1)
 	{
+		j = 0;
+		while (j < 32)
+			signal(j++, sig_hdl);
+		g_cursor = malloc(sizeof(t_list));
+		g_cursor->global = 0;
+		list = NULL;
+		i = 0;
 		ft_toggle_raw();
 		write(0, tgetstr("cl", 0), ft_strlen(tgetstr("cl", 0)));
 		ft_list(&list, argv);
