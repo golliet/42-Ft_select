@@ -6,7 +6,7 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/21 09:58:56 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/28 14:06:20 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/28 14:19:47 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ void	sig_z(int n)
 {
 	struct termios term;
 
-	g_cursor->global = 1;
 	tcgetattr(0, &term);
 	term.c_lflag &= ~(ICANON);
 	term.c_lflag &= ~(ECHO);

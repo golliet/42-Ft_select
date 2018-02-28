@@ -6,7 +6,7 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 12:59:54 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/28 14:14:27 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/28 14:18:23 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,11 +83,6 @@ void			ft_read(t_list *list, int argc)
 		{
 			ft_bzero(b, '\0');
 			rd = read(0, &b, 5);
-			if (g_cursor->global == 1)
-			{
-				g_cursor->global = 0;
-				continue;
-			}
 			b[rd] = '\0';
 			if (b[0] == 0x1b || b[0] == ' ' || b[0] == 0x7f || b[0] == '\n')
 				break ;
