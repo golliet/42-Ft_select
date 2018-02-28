@@ -6,7 +6,7 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 11:17:44 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/28 13:20:29 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/28 13:53:11 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,10 +65,11 @@ void				ft_read(t_list *list, int argc);
 ** Signal
 */
 
-void	sig_hdl(int s);
+void				sig_hdl(int s);
 void				sig_z(int n);
 void				sig_w(int n);
 int					ft_nb_line(int len, int col);
 void				sig_tstp(int n);
+void				ft_exit(void);
 
 #endif

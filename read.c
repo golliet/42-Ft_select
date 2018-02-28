@@ -6,7 +6,7 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 12:59:54 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/28 10:39:20 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/28 14:14:27 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,17 +36,14 @@ static void		ft_detect_term(t_list **current, char *str, t_list **list)
 	else if (str[0] == 0x7f && str[1] == '\0')
 		ft_del(list, current);
 	else if (str[0] == 0x1b && str[1] == '\0')
-	{
-		write(0, tgetstr("cl", 0), ft_strlen(tgetstr("cl", 0)));
-		ft_putstr_fd("\x1b[?25h", 0);
-		exit(0);
-	}
+		ft_exit();
 	else if (str[0] == '\n')
 	{
+		ft_putstr_fd("\x1b[?25h", 0);
 		write(0, tgetstr("cl", 0), ft_strlen(tgetstr("cl", 0)));
 		ft_display_selection(*list);
-		ft_putstr_fd("\x1b[?25h", 0);
-		exit(0);
+		tcsetattr(0, TCSANOW, g_cursor->old_term);
+		exit(1);
 	}
 	else if (ft_strncmp(str, "^[[", 3))
 	{
@@ -61,6 +58,14 @@ static void		ft_launch(t_list **current, char *b, t_list **list)
 {
 	ft_detect_term(current, b, list);
 	ft_read_display(*list);
+}
+
+void			ft_exit(void)
+{
+	ft_putstr_fd("\x1b[?25h", 0);
+	write(0, tgetstr("cl", 0), ft_strlen(tgetstr("cl", 0)));
+	tcsetattr(0, TCSANOW, g_cursor->old_term);
+	exit(1);
 }
 
 void			ft_read(t_list *list, int argc)

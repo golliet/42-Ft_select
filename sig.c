@@ -6,7 +6,7 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/21 09:58:56 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/28 13:23:32 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/28 14:06:20 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,35 +74,12 @@ void	sig_tstp(int n)
 	signal(SIGTSTP, SIG_DFL);
 }
 
-void	ft_end()
-{
-	struct termios term;
-	char  *name;
-
-	if ((name = getenv("TERM")) == NULL)
-		return ;
-	if (tgetent(NULL, name) != 1)
-		return ;
-	if (tcgetattr(0, &term) == -1)
-		return ;
-	term.c_lflag &= ICANON;
-	term.c_lflag &= ECHO;
-	if (tcsetattr(0, TCSANOW, &term) == -1)
-		return ;
-	exit(EXIT_FAILURE);
-}
-
 void	sig_hdl(int s)
 {
-	if (s == SIGINT || s == SIGQUIT || s == SIGKILL || s == SIGTERM || s == SIGABRT || s == SIGSEGV)
-	{
-		ft_putstr_fd("\x1b[?25h", 0);
-		write(0, tgetstr("cl", 0), ft_strlen(tgetstr("cl", 0)));
-
-		tcsetattr(0, TCSANOW, g_cursor->old_term);
-		exit(1);
-		//ft_end();
-	}
+	if (s == SIGINT || s == SIGQUIT || s == SIGKILL ||
+		s == SIGTERM || s == SIGABRT || s == SIGSEGV ||
+		s == SIGBUS || s == SIGHUP || s == SIGTERM)
+		ft_exit();
 	else if (s == SIGWINCH)
 		sig_w(s);
 	else if (s == SIGCONT)

@@ -6,7 +6,7 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 11:07:47 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/28 13:21:52 by golliet          ###   ########.fr       */
+/*   Updated: 2018/02/28 14:06:37 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ int		main(int argc, char **argv)
 {
 	int		i;
 	t_list	*list;
-	int j;
+	int		j;
 
 	if (argc > 1)
 	{
