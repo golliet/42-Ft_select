@@ -6,7 +6,7 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/15 11:17:44 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/28 13:53:11 by golliet          ###   ########.fr       */
+/*   Updated: 2018/03/06 10:21:49 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ void				ft_left_right(t_list **current, char *str);
 void				ft_read_display(t_list *list);
 void				ft_calculate(void);
 void				ft_read(t_list *list, int argc);
+void				ft_free_list(t_list *list);
 
 /*
 ** Signal

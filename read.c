@@ -6,7 +6,7 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 12:59:54 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/28 14:18:23 by golliet          ###   ########.fr       */
+/*   Updated: 2018/03/06 10:22:14 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,7 @@ void			ft_exit(void)
 	ft_putstr_fd("\x1b[?25h", 0);
 	write(0, tgetstr("cl", 0), ft_strlen(tgetstr("cl", 0)));
 	tcsetattr(0, TCSANOW, g_cursor->old_term);
+	ft_free_list(g_cursor->list);
 	exit(1);
 }
 

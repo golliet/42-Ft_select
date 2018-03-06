@@ -6,12 +6,20 @@
 /*   By: golliet <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/20 12:29:25 by golliet           #+#    #+#             */
-/*   Updated: 2018/02/28 13:53:29 by golliet          ###   ########.fr       */
+/*   Updated: 2018/03/06 10:21:35 by golliet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_select.h"
 #include "libft/libft.h"
+
+void			ft_free_list(t_list *list)
+{
+	if (list->next->len == -1)
+		ft_free_list(list->next);
+	free(list->str);
+	free(list);
+}
 
 static int	ft_empty_list(t_list *list)
 {
